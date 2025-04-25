@@ -42,6 +42,17 @@ except:  # Notify user that MATLAB is unavailable
     print("MATLAB Engine Unavailable")
     canUseMatlab = False
 
+if not canUseMatlab:
+    try:  # Imports Octave engine if available
+        from oct2py import Oct2Py
+
+        canUseOctave = True
+        print("Using Octave Engine")
+    except:  # Notify user that Octave is unavailable
+        print("Octave Engine Unavailable")
+        canUseOctave = False
+
+
 if sys.version_info < (3, 0, 0):  # tkinter names for python 2
     print("Update to Python3 for best results... You may encounter errors")
     from Tkinter import *
@@ -478,7 +489,7 @@ class mainClass:
         self.manualForAllL.bind("<Leave>", self.on_leave)
         rowCount = rowCount + 1
 
-        if canUseMatlab:
+        if canUseMatlab or canUseOctave:
             self.entropyL = Label(self.paramFrame, text="Run entropy calculation: ",
                                   bg="white")  # label for the tickbox
             self.entropyL.grid(row=rowCount, column=0, sticky=E)  # placed here
@@ -1689,16 +1700,24 @@ class mainClass:
     def calculateEntropy(self, theTrial, goalX, goalY):
         xList = []
         yList = []
-        try:
-            eng = matlab.engine.start_matlab()
-            logging.info("Matlab Engine Started")
-        except:
-            logging.info("Matlab Engine Running")
+
+        if canUseOctave:
+            oc = Oct2Py()
+            oc.addpath('./SearchStrategyAnalysis/')
+        else:
+            try:
+                eng = matlab.engine.start_matlab()
+                logging.info("Matlab Engine Started")
+            except:
+                logging.info("Matlab Engine Running")
+        
         for aDatapoint in theTrial:
             xList.append(float(aDatapoint.getx()))
             yList.append(float(aDatapoint.gety()))
-
-        entropyResult = eng.Entropy(xList, yList, goalX, goalY)
+        if canUseMatlab:
+            entropyResult = eng.Entropy(xList, yList, goalX, goalY)
+        elif canUseOctave:
+            entropyResult = oc.Entropy(xList, yList, goalX, goalY)
         return entropyResult
 
     def getAutoLocations(self, theExperiment, goalX, goalY, goalPosVar, mazeCentreX, mazeCentreY, mazeCentreVar,
