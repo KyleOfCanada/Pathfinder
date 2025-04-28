@@ -111,5 +111,6 @@ def heatmap(self, experiment):
     plt.title(aTitle)
     cb = plt.colorbar()
     photoName = aFileName + ".png"  # image name the same as plotname
-    plt.savefig(photoName, dpi=300, figsize=(3,3))  # save the file
+    plt.figure(figsize=(3,3))
+    plt.savefig(photoName, dpi=300)  # save the file
     plt.show()

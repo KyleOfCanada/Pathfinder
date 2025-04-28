@@ -52,6 +52,7 @@ if not canUseMatlab:
         print("Using Octave Engine")
     except:  # Notify user that Octave is unavailable
         print("Octave Engine Unavailable")
+        print("Install MATLAB or Octave if you wish to run entropy calculations")
         canUseOctave = False
 
 def is_dark_mode():  # Detect if system is in Dark Mode for MacOS
@@ -66,7 +67,7 @@ def is_dark_mode():  # Detect if system is in Dark Mode for MacOS
     except:
         return False
     
-if is_dark_mode():  # set colours depending upon dark mode
+if is_dark_mode():  # set colours depending upon dark mode in MacOS
     bg_color = '#2b2b2b'
     fg_color = '#ffffff'
 else:
@@ -566,7 +567,7 @@ class mainClass:
                 radius = float(mazeDiamStringVar.get()) / 2
                 scale = 1 / float(2*radius/300)
                 self.circle = canvas.create_oval(200 - scale * radius, 200 - scale * radius,
-                                                 200 + scale * radius, 200 + scale * radius, fill="white", width=3)
+                                                 200 + scale * radius, 200 + scale * radius, fill="white", outline="black", width=3)
 
                 mazeX, mazeY = mazeCentreStringVar.get().split(",")
                 mazeCentre = [float(mazeX) * scale, float(mazeY) * scale]
@@ -593,24 +594,24 @@ class mainClass:
                     ((goalCentre[0] - 200) ** 2) + ((goalCentre[1] - 200) ** 2)) + scale * float(
                     chainingRadiusStringVar.get()) / 2
                 self.bigChain = canvas.create_oval(bigChainLBorder, bigChainLBorder, bigChainRBorder, bigChainRBorder,
-                                                   fill="#c7c7c7", width=1)
+                                                   fill="#c7c7c7", outline="black", width=1)
                 self.smallChain = canvas.create_oval(smallChainLBorder, smallChainLBorder,
-                                                     smallChainRBorder, smallChainRBorder, fill="white", width=1)
+                                                     smallChainRBorder, smallChainRBorder, fill="white", outline="black", width=1)
 
                 bigThigmoRadius = 200 - scale * radius + scale * int(thigmotaxisZoneSizeStringVar.get())
                 smallThigmoRadius = 200 - scale * radius + scale * (int(thigmotaxisZoneSizeStringVar.get()) / 2)
                 self.bigThigmo = canvas.create_oval(bigThigmoRadius, bigThigmoRadius,
-                                                    400 - bigThigmoRadius, 400 - bigThigmoRadius, dash=(2, 1))
+                                                    400 - bigThigmoRadius, 400 - bigThigmoRadius, dash=(2, 1), outline="black")
                 self.smallThigmo = canvas.create_oval(smallThigmoRadius, smallThigmoRadius,
-                                                      400 - smallThigmoRadius, 400 - smallThigmoRadius, dash=(2, 1))
+                                                      400 - smallThigmoRadius, 400 - smallThigmoRadius, dash=(2, 1), outline="black")
 
-                self.centerLine = canvas.create_line(200, 200 + scale * radius, 200, 200 - scale * radius, dash=(1, 1))
-                self.centerLine = canvas.create_line(200 - scale * radius, 200, 200 + scale * radius, 200, dash=(1, 1))
+                self.centerLine = canvas.create_line(200, 200 + scale * radius, 200, 200 - scale * radius, dash=(1, 1), fill="black")
+                self.centerLine = canvas.create_line(200 - scale * radius, 200, 200 + scale * radius, 200, dash=(1, 1), fill="black")
                 self.centerToGoalLine = canvas.create_line(200, 200 + scale * radius, goalCentre[0], goalCentre[1],
                                                            fill="red")
-                self.start = canvas.create_oval(195, 195 + scale * radius, 205, 205 + scale * radius, fill="green",
+                self.start = canvas.create_oval(195, 195 + scale * radius, 205, 205 + scale * radius, fill="green", outline="black",
                                                 width=1)
-                self.goal = canvas.create_oval(goalLBorder, goalTopBorder, goalRBorder, goalBottomBorder, fill="red",
+                self.goal = canvas.create_oval(goalLBorder, goalTopBorder, goalRBorder, goalBottomBorder, fill="red", outline="black",
                                                width=1)
 
                 # calculation of angular cooridor, updates to user input and renders blue lines on user interface
@@ -1693,7 +1694,8 @@ class mainClass:
         plt.title("Day: " + dayValStringVar.get() + " Trial: " + trialValStringVar.get())
         cb = plt.colorbar()
         photoName = aFileName + ".png"  # image name the same as plotname
-        plt.savefig(photoName, dpi=300, figsize=(4, 4))  # save the file
+        plt.figure(figsize=(4, 4))
+        plt.savefig(photoName, dpi=300)  # save the file
         plt.show()
 
     def updateTasks(self):  # called when we want to push an update to the GUI
@@ -1723,7 +1725,8 @@ class mainClass:
 
         if canUseOctave:
             oc = Oct2Py()
-            oc.addpath('./SearchStrategyAnalysis/')
+            current_dir = os.path.dirname(__file__)
+            oc.addpath(current_dir)
         else:
             try:
                 eng = matlab.engine.start_matlab()
