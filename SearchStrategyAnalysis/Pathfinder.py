@@ -1671,6 +1671,7 @@ class mainClass:
         heatmap, xedges, yedges = np.histogram2d(X, Y)
 
         # Plot heatmap
+        plt.figure(figsize=(4, 4))
         maxVal = maxValStringVar.get()
         if maxVal == "Auto" or maxVal == "auto" or maxVal == "automatic" or maxVal == "Automatic" or maxVal == "":
             hb = plt.hexbin(X, Y, gridsize=gridSize, cmap=CM.jet, vmin=0, bins=None)
@@ -1694,7 +1695,7 @@ class mainClass:
         plt.title("Day: " + dayValStringVar.get() + " Trial: " + trialValStringVar.get())
         cb = plt.colorbar()
         photoName = aFileName + ".png"  # image name the same as plotname
-        plt.figure(figsize=(4, 4))
+        
         plt.savefig(photoName, dpi=300)  # save the file
         plt.show()
 
