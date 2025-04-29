@@ -32,6 +32,7 @@ setup(
         'pillow',
         'matplotlib',
         'scipy',
+        'oct2py',
     ],
     include_package_data=True,
     long_description=long_description,
